@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// prisma/schema.prisma
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  // uncomment next line if you use Prisma <5.10
+  // directUrl = env("DATABASE_URL_UNPOOLED")
+}
+model User {
+  id Int @id @default(autoincrement())
+  name String
+  username String @unique
+  password String
+  createdAt DateTime @default(now())
+  roles Role[]
+  purchases Purchase[]
+  artworks Artwork[]
+  comments Comment[]
+  profile Profile?
+}
+
+model Artwork {
+  id Int @id @default(autoincrement())
+  title String
+  description String
+  price Float
+  createdAt DateTime @default(now())
+  purchases Purchase[]
+  artist User @relation(fields: [artistId], references: [id])
+  artistId Int
+  comments Comment[]
+  category CategoryOnArtwork[]
+  images Image[]
+}
+model Purchase {
+  id Int @id @default(autoincrement())
+  buyer User @relation(fields: [buyerId], references: [id])
+  buyerId Int
+  artwork Artwork @relation(fields: [artworkId], references: [id])
+  artworkId Int
+  amount Float
+  transactionDate DateTime @default(now())
+  paymentStatus PaymentStatus @default(PENDING)
+  createdAt DateTime @default(now())
+
+}
+
+model Category {
+  id Int @id @default(autoincrement())
+  name String @unique
+  artwork CategoryOnArtwork[]
+  createdAt DateTime @default(now())
+
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  author User @relation(fields: [authorId], references: [id])
+  authorId Int
+  artwork Artwork @relation(fields: [artworkId], references: [id])
+  artworkId Int
+  content String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CategoryOnArtwork {
+  artwork Artwork @relation(fields: [artworkId], references: [id])
+  artworkId Int
+  category Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  createdAt DateTime @default(now())
+
+  @@unique([artworkId, categoryId])
+}
+
+model Image {
+  id          Int      @id @default(autoincrement())
+  artwork     Artwork?  @relation(fields: [artworkId], references: [id])
+  artworkId   Int?
+  url         String   // Cloudinary URL of the image
+  createdAt   DateTime @default(now())
+  altText     String?  // Optional: description for accessibility
+}
+
+model Profile {
+  id Int @default(autoincrement())
+  bio String?
+  profilePic String
+  user User @relation(fields: [userId], references: [id])
+  userId Int @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+
+
+enum Role {
+  CUSTOMER
+  ARTIST
+  ADMIN
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  CANCELED
+}
