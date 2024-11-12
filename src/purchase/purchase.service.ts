@@ -54,7 +54,16 @@ export class PurchaseService {
             name: true,
           }
         },
-        artwork: true
+        artwork: {
+          include: {
+            artist: {
+              select: {
+                id: true,
+                name: true,
+              }
+            }
+          }
+        }
       }
     })
   }
@@ -75,13 +84,26 @@ export class PurchaseService {
             name: true,
           }
         },
-        artwork: true
+        artwork: {
+          include: {
+            artist: {
+              select: {
+                id: true,
+                name: true,
+              }
+            }
+          }
+        }
       }
     })
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} purchase`;
+    return this.databaseService.purchase.findUnique({
+      where: {
+        id,
+      }
+    })
   }
 
   update(id: number, updatePurchaseDto: UpdatePurchaseDto) {

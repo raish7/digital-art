@@ -11,7 +11,7 @@ CREATE TABLE "User" (
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "role" "Role"[],
+    "roles" "Role"[],
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -21,7 +21,6 @@ CREATE TABLE "Artwork" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "imageUrl" TEXT NOT NULL,
     "price" DOUBLE PRECISION NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "artistId" INTEGER NOT NULL,
@@ -70,6 +69,27 @@ CREATE TABLE "CategoryOnArtwork" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- CreateTable
+CREATE TABLE "Image" (
+    "id" SERIAL NOT NULL,
+    "artworkId" INTEGER,
+    "url" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "altText" TEXT,
+
+    CONSTRAINT "Image_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Profile" (
+    "id" SERIAL NOT NULL,
+    "bio" TEXT,
+    "profilePic" TEXT NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
@@ -78,6 +98,9 @@ CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CategoryOnArtwork_artworkId_categoryId_key" ON "CategoryOnArtwork"("artworkId", "categoryId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
 
 -- AddForeignKey
 ALTER TABLE "Artwork" ADD CONSTRAINT "Artwork_artistId_fkey" FOREIGN KEY ("artistId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -99,3 +122,9 @@ ALTER TABLE "CategoryOnArtwork" ADD CONSTRAINT "CategoryOnArtwork_artworkId_fkey
 
 -- AddForeignKey
 ALTER TABLE "CategoryOnArtwork" ADD CONSTRAINT "CategoryOnArtwork_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Image" ADD CONSTRAINT "Image_artworkId_fkey" FOREIGN KEY ("artworkId") REFERENCES "Artwork"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

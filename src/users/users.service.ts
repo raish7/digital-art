@@ -19,6 +19,9 @@ export class UsersService {
     return this.databaseService.user.findUnique({
       where: {
         id
+      },
+      include: {
+        profile: true
       }
     })
   }

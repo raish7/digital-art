@@ -12,7 +12,7 @@ export class ArtworkService {
   create(createArtworkDto: Prisma.ArtworkCreateInput) {
     const { title, description, price, images, artist, category } =
       createArtworkDto;
-    console.log('category', category);
+    console.log('category', createArtworkDto);
     const response = this.databaseService.artwork.create({
       data: {
         title,
@@ -44,20 +44,20 @@ export class ArtworkService {
   findAll(artistId?: number, priceSortBy?: any, category ?: number) {
     return this.databaseService.artwork.findMany({
       where: {
-        artist: {
-          id: artistId || undefined,
-        },
-        category: {
-          some: {
-            categoryId: category || undefined,
-          }
-        }
+        ...(artistId ? { artistId } : {}), // Include artistId filter if artistId is provided
+        ...(category ? { category: { some: { categoryId: category } } } : {}), // Include category filter if category is provided
       },
       orderBy: {
-        price: priceSortBy || undefined,
+        ...(priceSortBy ? { price: priceSortBy } : {}), // Order by price only if priceSortBy is provided
       },
       include: {
-        artist: true,
+        artist: {
+          select: {
+            username: true,
+            name: true,
+            id: true
+          }
+        },
         images: true,
         category: {
           select: {
@@ -91,8 +91,36 @@ export class ArtworkService {
         id,
       },
       include: {
-        artist: true,
+        artist: {
+          select: {
+            username: true,
+            name: true,
+            id: true
+          }
+        },
         images: true,
+        category: {
+          select: {
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        comments: {
+          select: {
+            content: true,
+            createdAt: true,
+            updatedAt: true,
+            author: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -120,6 +148,10 @@ export class ArtworkService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} artwork`;
+    return this.databaseService.artwork.delete({
+      where: {
+        id
+      }
+    })
   }
 }

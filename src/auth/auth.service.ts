@@ -30,6 +30,12 @@ export class AuthService {
             throw new Error('Invalid password');
         }
         // const tokenPayload = { username: user.username, id : user.id, roles: user.roles };
-        return user;
+        return {
+            id: user.id,
+            name: user.name,
+            username: user.username,
+            roles: user.roles,
+            createdAt: user.createdAt
+        };
     }
 }
