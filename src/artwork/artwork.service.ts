@@ -41,15 +41,16 @@ export class ArtworkService {
     return response;
   }
 
-  findAll(artistId?: number, priceSortBy?: any, category ?: number) {
+  findAll(artistId?: number, priceSortBy?: any, category ?: number, sortBy ?: any) {
     return this.databaseService.artwork.findMany({
       where: {
         ...(artistId ? { artistId } : {}), // Include artistId filter if artistId is provided
         ...(category ? { category: { some: { categoryId: category } } } : {}), // Include category filter if category is provided
       },
-      orderBy: {
-        ...(priceSortBy ? { price: priceSortBy } : {}), // Order by price only if priceSortBy is provided
-      },
+      orderBy: [
+        ...(priceSortBy ? [{ price: priceSortBy }] : []), // Order by price if priceSortBy is provided
+        ...(sortBy ? [{ views: sortBy }] : []),           // Order by views if sortBy is provided
+      ],
       include: {
         artist: {
           select: {
@@ -85,7 +86,15 @@ export class ArtworkService {
     });
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
+    await this.databaseService.artwork.update({
+      where: {
+        id
+      },
+      data: {
+        views: { increment: 1}
+      }
+    })
     return this.databaseService.artwork.findUnique({
       where: {
         id,
@@ -121,6 +130,7 @@ export class ArtworkService {
             },
           },
         },
+        
       },
     });
   }
