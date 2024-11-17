@@ -7,6 +7,11 @@ import { writeFileSync } from 'fs';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalInterceptors(new InterceptorsInterceptor())
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+  app.enableCors({
+    origin: allowedOrigins,
+    credentials: false, // No cookies or credentials will be sent
+  });
   const config = new DocumentBuilder()
   .setTitle('Digital Artwork API')
   .setDescription('The Digital Artwork API description')
