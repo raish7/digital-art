@@ -8,20 +8,21 @@ import { DatabaseService } from 'src/database/database.service';
 export class PurchaseService {
   constructor(private readonly databaseService: DatabaseService) {}
   async create(createPurchaseDto: Prisma.PurchaseCreateInput) {
-    const { amount, buyer, artwork } = createPurchaseDto
+    const { amount, buyer, artworks, pidx } = createPurchaseDto
     return this.databaseService.purchase.create({
       data: {
+        pidx,
         amount,
         buyer: {
           connect: {
             id: +buyer
           }
         },
-        artwork: {
-          connect: {
-            id: +artwork
-          }
-        }
+        artworks: {
+          create: (artworks as any[]).map((artworkId) => ({
+            artwork: { connect: { id: artworkId } },
+          })),
+        },
       }
     })
   }
@@ -35,7 +36,15 @@ export class PurchaseService {
             name: true,
           }
         },
-        artwork: true
+        artworks: {
+          include: {
+            artwork: {
+              include: {
+                images: true
+              }
+            }
+          }
+        }
       }
     })
   }
@@ -54,48 +63,54 @@ export class PurchaseService {
             name: true,
           }
         },
-        artwork: {
+        artworks: {
           include: {
-            artist: {
-              select: {
-                id: true,
-                name: true,
+            artwork: {
+              include: {
+                images: true,
+                artist: {
+                  select: {
+                    id: true,
+                    name: true,
+                    username: true
+                  }
+                }
               }
             }
-          }
+          },
         }
       }
     })
   }
 
   findPurchaseByArtist(id: number) {
-    return this.databaseService.purchase.findMany({
-      where: {
-        artwork: {
-          artist: {
-            id
-          }
-        }
-      },
-      include: {
-        buyer: {
-          select:{
-            id: true,
-            name: true,
-          }
-        },
-        artwork: {
-          include: {
-            artist: {
-              select: {
-                id: true,
-                name: true,
-              }
-            }
-          }
-        }
-      }
-    })
+    // return this.databaseService.purchase.findMany({
+    //   where: {
+    //     artworks: {
+    //       some: {
+    //         artistId: id
+    //       }
+    //     }
+    //   },
+    //   include: {
+    //     buyer: {
+    //       select:{
+    //         id: true,
+    //         name: true,
+    //       }
+    //     },
+    //     artwork: {
+    //       include: {
+    //         artist: {
+    //           select: {
+    //             id: true,
+    //             name: true,
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // })
   }
 
   findOne(id: number) {
@@ -108,6 +123,19 @@ export class PurchaseService {
 
   update(id: number, updatePurchaseDto: UpdatePurchaseDto) {
     return `This action updates a #${id} purchase`;
+  }
+
+  updateStatus(pidx: string, updatePurhcaseDto: Prisma.PurchaseUpdateInput) {
+    const {amount, paymentStatus} = updatePurhcaseDto;
+    return this.databaseService.purchase.update({
+      where: {
+        pidx
+      },
+      data:{
+        amount,
+        paymentStatus
+      }
+    })
   }
 
   remove(id: number) {

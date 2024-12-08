@@ -33,6 +33,11 @@ export class PurchaseController {
     return this.purchaseService.findOne(+id);
   }
 
+  @Patch('update-status/:pidx')
+  updateStatus(@Param('pidx') pidx: string, @Body() updatePurchaseDto: Prisma.PurchaseUpdateInput) {
+    return this.purchaseService.updateStatus(pidx, updatePurchaseDto);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePurchaseDto: UpdatePurchaseDto) {
     return this.purchaseService.update(+id, updatePurchaseDto);

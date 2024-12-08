@@ -34,7 +34,7 @@ model Artwork {
   description String
   price Float
   createdAt DateTime @default(now())
-  purchases Purchase[]
+  purchases PurchaseArtwork[] // Relation to the intermediate table
   artist User @relation(fields: [artistId], references: [id])
   artistId Int
   comments Comment[]
@@ -45,15 +45,24 @@ model Artwork {
 }
 model Purchase {
   id Int @id @default(autoincrement())
+  pidx String @unique
   buyer User @relation(fields: [buyerId], references: [id])
   buyerId Int
-  artwork Artwork @relation(fields: [artworkId], references: [id])
-  artworkId Int
   amount Float
   transactionDate DateTime @default(now())
   paymentStatus PaymentStatus @default(PENDING)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  artworks PurchaseArtwork[] // Relation to the intermediate table
+}
+
+model PurchaseArtwork {
+  id Int @id @default(autoincrement())
+  purchase Purchase @relation(fields: [purchaseId], references: [id])
+  purchaseId Int
+  artwork Artwork @relation(fields: [artworkId], references: [id])
+  artworkId Int
 }
 
 model Category {
