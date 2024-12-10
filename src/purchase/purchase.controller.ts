@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { PurchaseService } from './purchase.service';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
 import { Prisma } from '@prisma/client';
+import { AuthGuard } from 'src/auth/auth/auth.guard';
 
 @Controller('purchase')
 export class PurchaseController {
   constructor(private readonly purchaseService: PurchaseService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() createPurchaseDto: Prisma.PurchaseCreateInput) {
     return this.purchaseService.create(createPurchaseDto);

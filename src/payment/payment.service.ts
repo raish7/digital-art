@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { HttpService } from '@nestjs/axios';
 import { Observable, catchError, map, switchMap } from 'rxjs';
+import { AuthGuard } from 'src/auth/auth/auth.guard';
 
 @Injectable()
 export class PaymentService {
   constructor(private readonly httpService: HttpService) {}
+  @UseGuards(AuthGuard)
   create(payload: any): Observable<any> {
     const paymentUrl = `https://a.khalti.com/api/v2/epayment/initiate/`;
     const headers = {
@@ -21,6 +23,7 @@ export class PaymentService {
     );
   }
 
+  @UseGuards(AuthGuard)
   lookup(payload: any) {
     const url = `https://a.khalti.com/api/v2/epayment/lookup/`;
     const headers = {

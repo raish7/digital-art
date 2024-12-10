@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import * as bcrypt from 'bcrypt';
 import { Prisma } from '@prisma/client';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-    constructor(private readonly databaseService: DatabaseService) { }
+    constructor(private readonly databaseService: DatabaseService, private jwtService: JwtService) { }
 
     async create(createUserDto: Prisma.UserCreateInput) {
         const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -29,13 +30,14 @@ export class AuthService {
         if (!isPasswordValid) {
             throw new Error('Invalid password');
         }
-        // const tokenPayload = { username: user.username, id : user.id, roles: user.roles };
+        const tokenPayload = { id : user.id, username: user.username,  roles: user.roles };
         return {
             id: user.id,
             name: user.name,
             username: user.username,
             roles: user.roles,
-            createdAt: user.createdAt
+            createdAt: user.createdAt,
+            access_token: await this.jwtService.signAsync(tokenPayload)
         };
     }
 }
