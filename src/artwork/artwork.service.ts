@@ -27,11 +27,11 @@ export class ArtworkService {
           })),
         },
         category:
-          (category as any[])?.length > 0
+          (category as number[])?.length > 0
             ? {
-                create: (category as any[]).map((categoryId: number) => ({
+                create: (category as any[]).map((categoryId) => ({
                   category: {
-                    connect: { id: +categoryId },
+                    connect: { id: categoryId },
                   },
                 })),
               }
@@ -41,7 +41,12 @@ export class ArtworkService {
     return response;
   }
 
-  findAll(artistId?: number, priceSortBy?: any, category ?: number, sortBy ?: any) {
+  findAll(
+    artistId?: number,
+    priceSortBy?: any,
+    category?: number,
+    sortBy?: any,
+  ) {
     return this.databaseService.artwork.findMany({
       where: {
         ...(artistId ? { artistId } : {}), // Include artistId filter if artistId is provided
@@ -49,15 +54,15 @@ export class ArtworkService {
       },
       orderBy: [
         ...(priceSortBy ? [{ price: priceSortBy }] : []), // Order by price if priceSortBy is provided
-        ...(sortBy ? [{ views: sortBy }] : []),           // Order by views if sortBy is provided
+        ...(sortBy ? [{ views: sortBy }] : []), // Order by views if sortBy is provided
       ],
       include: {
         artist: {
           select: {
             username: true,
             name: true,
-            id: true
-          }
+            id: true,
+          },
         },
         images: true,
         category: {
@@ -89,12 +94,12 @@ export class ArtworkService {
   async findOne(id: number) {
     await this.databaseService.artwork.update({
       where: {
-        id
+        id,
       },
       data: {
-        views: { increment: 1}
-      }
-    })
+        views: { increment: 1 },
+      },
+    });
     return this.databaseService.artwork.findUnique({
       where: {
         id,
@@ -104,8 +109,8 @@ export class ArtworkService {
           select: {
             username: true,
             name: true,
-            id: true
-          }
+            id: true,
+          },
         },
         images: true,
         category: {
@@ -130,7 +135,6 @@ export class ArtworkService {
             },
           },
         },
-        
       },
     });
   }
@@ -160,8 +164,8 @@ export class ArtworkService {
   remove(id: number) {
     return this.databaseService.artwork.delete({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
   }
 }

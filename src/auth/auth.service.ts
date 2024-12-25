@@ -22,7 +22,7 @@ export class AuthService {
             where: {
                 username: payload.username
             }
-        })
+        });
         if (!user) {
             throw new Error('User not found');
         }

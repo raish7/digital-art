@@ -11,6 +11,11 @@ export class PaymentController {
     return this.paymentService.create(createPaymentDto);
   }
 
+  @Post('esewa')
+  esewa(@Body() esewaPaymentDto: any) {
+    return this.paymentService.esewaPayment(esewaPaymentDto);
+  }
+
   @Post('lookup')
   lookup(@Body() lookupPayload: any) {
     return this.paymentService.lookup(lookupPayload);

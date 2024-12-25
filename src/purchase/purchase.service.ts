@@ -84,33 +84,41 @@ export class PurchaseService {
   }
 
   findPurchaseByArtist(id: number) {
-    // return this.databaseService.purchase.findMany({
-    //   where: {
-    //     artworks: {
-    //       some: {
-    //         artistId: id
-    //       }
-    //     }
-    //   },
-    //   include: {
-    //     buyer: {
-    //       select:{
-    //         id: true,
-    //         name: true,
-    //       }
-    //     },
-    //     artwork: {
-    //       include: {
-    //         artist: {
-    //           select: {
-    //             id: true,
-    //             name: true,
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // })
+    return this.databaseService.purchase.findMany({
+      where: {
+        artworks: {
+          some: {
+            artwork: {
+              artistId: id
+            }
+          }
+        }
+      },
+      include: {
+        buyer: {
+          select:{
+            id: true,
+            name: true,
+          }
+        },
+        artworks: {
+          include: {
+            artwork: {
+              include: {
+                images: true,
+                artist: {
+                  select: {
+                    id: true,
+                    name: true,
+                    username: true
+                  }
+                }
+              }
+            }
+          },
+        }
+      }
+    })
   }
 
   findOne(id: number) {
