@@ -8,18 +8,21 @@ import {
   Delete,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ArtworkService } from './artwork.service';
 import { CreateArtworkDto } from './dto/create-artwork.dto';
 import { UpdateArtworkDto } from './dto/update-artwork.dto';
 import { Prisma } from '@prisma/client';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth/auth.guard';
 
 @Controller('artwork')
 @ApiTags('Artwork')
 export class ArtworkController {
   constructor(private readonly artworkService: ArtworkService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   @ApiOperation({ summary: 'Create a new artwork' })
   @ApiResponse({
@@ -73,6 +76,7 @@ export class ArtworkController {
     return this.artworkService.findOne(+id);
   }
 
+  @UseGuards(AuthGuard)
   @Put(':id')
   @ApiOperation({ summary: 'Update an existing artwork' })
   updateArtwork(
@@ -87,6 +91,7 @@ export class ArtworkController {
   //   return this.artworkService.update(+id, updateArtworkDto);
   // }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an existing artwork' })
   remove(@Param('id') id: string) {
