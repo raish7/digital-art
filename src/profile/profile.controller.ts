@@ -20,7 +20,7 @@ export class ProfileController {
   //   return this.profileService.findAll();
   // }
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Get('user/:id')
   findOne(@Param('id') id: string) {
     return this.profileService.findOne(+id,);
