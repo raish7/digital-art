@@ -80,6 +80,9 @@ model Comment {
   artwork Artwork @relation(fields: [artworkId], references: [id])
   artworkId Int
   content String
+  parentId Int?
+  parent Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies Comment[] @relation("CommentReplies")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -104,7 +107,7 @@ model Image {
 }
 
 model Profile {
-  id Int @default(autoincrement())
+  id Int @id @default(autoincrement())
   bio String?
   profilePic String
   user User @relation(fields: [userId], references: [id])

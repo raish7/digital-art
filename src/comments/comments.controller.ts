@@ -15,6 +15,11 @@ export class CommentsController {
     return this.commentsService.create(createCommentDto);
   }
 
+  @Post('reply')
+  reply(@Body() createCommentDto: Prisma.CommentCreateInput) {
+    return this.commentsService.reply(createCommentDto)
+  }
+
   @Get()
   findAll() {
     return this.commentsService.findAll();

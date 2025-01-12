@@ -123,14 +123,52 @@ export class ArtworkService {
           },
         },
         comments: {
-          select: {
-            content: true,
-            createdAt: true,
-            updatedAt: true,
+          where: {
+            parentId: null,
+          },
+          include: {
             author: {
               select: {
                 id: true,
+                username: true,
                 name: true,
+                profile: true,
+              },
+            },
+            replies: {
+              include: {
+                author: {
+                  select: {
+                    id: true,
+                    username: true,
+                    name: true,
+                    profile: true,
+                  },
+                },
+                replies: {
+                  include: {
+                    author: {
+                      select: {
+                        id: true,
+                        username: true,
+                        name: true,
+                        profile: true,
+                      },
+                    },
+                    replies: {
+                      include: {
+                        author: {
+                          select: {
+                            id: true,
+                            username: true,
+                            name: true,
+                            profile: true,
+                          }
+                        }
+                      }
+                    },
+                  },
+                },
               },
             },
           },

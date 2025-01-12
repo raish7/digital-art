@@ -25,6 +25,29 @@ export class CommentsService {
     });
   }
 
+  async reply(createCommentDto: Prisma.CommentCreateInput) {
+    return this.databaseService.comment.create({
+      data: {
+        content: createCommentDto.content,
+        author: {
+          connect: {
+            id: +createCommentDto.author,
+          }
+        },
+        artwork: {
+          connect: {
+            id: +createCommentDto.artwork
+          }
+        },
+        parent: {
+          connect: {
+            id: +createCommentDto.parent
+          }
+        }
+      }
+    })
+  }
+
   findAll() {
     return `This action returns all comments`;
   }
