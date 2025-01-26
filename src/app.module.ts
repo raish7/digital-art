@@ -13,9 +13,10 @@ import { CommentsModule } from './comments/comments.module';
 import { ProfileModule } from './profile/profile.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { PaymentModule } from './payment/payment.module';
+import { LlamaModule } from './llama/llama.module';
 
 @Module({
-  imports: [UsersModule, DatabaseModule, AuthModule, CloudinaryModule, ImagesModule, ArtworkModule, CategoriesModule, PurchaseModule, CommentsModule, ProfileModule, WishlistModule, PaymentModule],
+  imports: [UsersModule, DatabaseModule, AuthModule, CloudinaryModule, ImagesModule, ArtworkModule, CategoriesModule, PurchaseModule, CommentsModule, ProfileModule, WishlistModule, PaymentModule, LlamaModule],
   controllers: [AppController],
   providers: [AppService],
 })

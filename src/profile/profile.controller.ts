@@ -33,6 +33,12 @@ export class ProfileController {
   }
 
   @UseGuards(AuthGuard)
+  @Patch('user/:id')
+  patch(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
+    return this.profileService.patch(+id, updateProfileDto);
+  }
+
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.profileService.remove(+id);

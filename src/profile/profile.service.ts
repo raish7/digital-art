@@ -59,6 +59,15 @@ export class ProfileService {
     })
   }
 
+  patch(id: number, updateProfileDto: Prisma.ProfileUpdateInput) {
+    return this.databaseService.profile.update({
+      where: {
+        userId: id
+      },
+      data: updateProfileDto
+    })
+  }
+
   remove(id: number) {
     return `This action removes a #${id} profile`;
   }
